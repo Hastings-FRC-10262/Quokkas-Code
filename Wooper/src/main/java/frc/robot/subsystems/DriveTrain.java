@@ -15,10 +15,37 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj.Encoder;
+
+
 public class DriveTrain extends SubsystemBase {
   SparkMax leftFront, leftRear, rightFront, rightRear;
   SparkMaxConfig leftFrontConfig, leftRearConfig, rightFrontConfig, rightRearConfig;
 
+
+  private final Encoder leftEncoder = new Encoder(0,0);
+  private final Encoder rightEncoder = new Encoder(0, 0);
+
+  public double getLeftEncoderPosition() {
+    return leftEncoder.get();
+  }
+
+  public double getRightEncoderPosition() {
+    return rightEncoder.get();
+  }
+
+  public double getLeftEncoderVelocity() {
+    return leftEncoder.getRate(); // Returns counts per second
+  }
+
+  public double getRightEncoderVelocity() {
+    return rightEncoder.getRate();
+  }
+
+  public void resetEncoders() {
+    leftEncoder.reset();
+    rightEncoder.reset();
+  }
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
@@ -85,6 +112,89 @@ public class DriveTrain extends SubsystemBase {
         rightFront.set(-1 * velocity);
       });
   }
+
+  public Command moveStraightPID(double feet, double velocity) {
+    return new Command() {
+        private double targetDistance;
+
+        @Override
+        public void initialize() {
+            
+            resetEncoders();
+
+            
+            double wheelCircumference = Math.PI * 6.0;
+            double feetPerRevolution = wheelCircumference / 12.0;
+            double countsPerFoot = 2048.0 / feetPerRevolution;
+
+            targetDistance = feet * countsPerFoot;
+        }
+
+        @Override
+        public void execute() {
+            leftFront.set(velocity);
+            rightFront.set(velocity);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return Math.abs(getLeftEncoderPosition()) >= targetDistance ||
+                   Math.abs(getRightEncoderPosition()) >= targetDistance;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            
+            leftFront.set(0);
+            rightFront.set(0);
+        }
+    };
+}
+
+public Command turnDegreesPID(double degrees, double velocity) {
+  return new Command() {
+      private double targetDistance;
+      private final double wheelBaseWidth = 24.0;
+      private final double wheelCircumference = Math.PI * 6.0;
+
+      @Override
+      public void initialize() {
+          
+          resetEncoders();
+
+          
+          double robotCircumference = Math.PI * wheelBaseWidth;
+          double feetPerDegree = (robotCircumference / 12.0) / 360.0;
+          double feetToTravel = feetPerDegree * degrees;
+          double countsPerFoot = 2048.0 / (wheelCircumference / 12.0);
+
+          targetDistance = feetToTravel * countsPerFoot;
+      }
+
+      @Override
+      public void execute() {
+          leftFront.set(velocity);
+          rightFront.set(-velocity);
+      }
+
+      @Override
+      public boolean isFinished() {
+          
+          return Math.abs(getLeftEncoderPosition()) >= targetDistance ||
+                 Math.abs(getRightEncoderPosition()) >= targetDistance;
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+          // Stop the motors when finished
+          leftFront.set(0);
+          rightFront.set(0);
+      }
+  };
+}
+
+
+
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
