@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -26,9 +29,8 @@ public class RobotContainer {
   private final Climber m_climber = new Climber();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  private final Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -48,66 +50,64 @@ public class RobotContainer {
 
     // *** Drive bindings ***
     // Default behaviour (follow Y-axes of joysticks to implement tank drive)
-    m_drive.setDefaultCommand(m_drive.driveTank(m_driverController::getLeftY, m_driverController::getRightY));    
-    
+    // *** Drive bindings ***
+    // Default behavior (follow Y-axes of joysticks to implement tank drive)
+    m_drive.setDefaultCommand(
+        m_drive.driveTank(
+            () -> -m_driverController.getRawAxis(1), // Left stick Y-axis (inverted)
+            () -> -m_driverController.getRawAxis(3)  // Right stick Y-axis (inverted, may need testing)
+        )
+    );}
 
-    // *** Arm bindings ***
+    // // *** Arm bindings ***
+    // // Move to intake coral with Y (Button 4)
+    // new JoystickButton(m_driverController, 4)
+    //     .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
 
-    // Move to intake coral with Y
-    m_driverController.y()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
+    // // Move to intake algae with X (Button 1)
+    // new JoystickButton(m_driverController, 1)
+    //     .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
 
-    // Move to intake algae with X
-    m_driverController.x()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
+    // // Move to remove low-reef algae and dump L1 coral with B (Button 3)
+    // new JoystickButton(m_driverController, 3)
+    //     .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
 
-    // Move to remove low-reef algae and dump L1 coral with B
-    m_driverController.b()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
+    // // Move to remove high-reef algae with A (Button 2)
+    // new JoystickButton(m_driverController, 2)
+    //     .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
 
-    // Move to remove high-reef algae with A
-    m_driverController.a()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
+    // // Move to start climb with D-Pad Down (POV 180°)
+    // new POVButton(m_driverController, 180)
+    //     .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbStart));
 
-    // Move to start climb with D-Pad Down
-    m_driverController.povDown()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbStart));
+    // // Move to finish climb with D-Pad Up (POV 0°)
+    // new POVButton(m_driverController, 0)
+    //     .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbEnd));
 
-    // Move to finish climb with D-Pad up
-    m_driverController.povUp()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbEnd));
+    // // *** Intake bindings ***
+    // // Default behavior (do nothing)
+    // m_intake.setDefaultCommand(m_intake.moveIntake(0.0));
 
-    
-    // *** Intake bindings ***
-    // Default behaviour (do nothing)
-    m_intake.setDefaultCommand(m_intake.moveIntake(0.0));
+    // // Run intake with right bumper (Button 6)
+    // new JoystickButton(m_driverController, 6)
+    //     .whileTrue(m_intake.moveIntake(0.75));
 
-    // Run intake with right bumper button
-    m_driverController.rightBumper()
-      .and(m_driverController.rightTrigger().negate())
-      .whileTrue(m_intake.moveIntake(0.75));
+    // // Run intake in reverse with right trigger (Axis 3)
+    // new JoystickButton(m_driverController, 7) // No exact button for RT, using "Mode" button as an alternative
+    //     .whileTrue(m_intake.moveIntake(-0.75));
 
-    // Run intake in reverse with right trigger button
-    m_driverController.rightTrigger()
-      .and(m_driverController.rightBumper().negate()) 
-      .whileTrue(m_intake.moveIntake(-0.75));
+    // // *** Climber bindings ***
+    // // Default behavior (do nothing)
+    // m_climber.setDefaultCommand(m_climber.moveClimber(0.0));
 
+    // // Disengage climber with left bumper (Button 5)
+    // new JoystickButton(m_driverController, 5)
+    //     .whileTrue(m_climber.moveClimber(0.5));
 
-    // *** Climber bindings ***
-    // Default behaviour (do nothing)
-    m_climber.setDefaultCommand(m_climber.moveClimber(0.0));
-
-    // Disengage climber with back button
-    m_driverController.leftBumper()
-      .and(m_driverController.leftTrigger().negate())
-      .whileTrue(m_climber.moveClimber(0.5));
-
-    // Engage climber with start buttom
-    m_driverController.leftTrigger()
-      .and(m_driverController.leftBumper().negate())
-      .whileTrue(m_climber.moveClimber(-0.5));
-
-  }
+    // // Engage climber with start button (Button 8)
+    // new JoystickButton(m_driverController, 8)
+    //     .whileTrue(m_climber.moveClimber(-0.5));
+    //   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
