@@ -8,6 +8,7 @@ import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,8 +29,8 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
-    armMotor1 = new SparkMax(6, MotorType.kBrushed);
-    armMotor2 = new SparkMax(7, MotorType.kBrushed);
+    armMotor1 = new SparkMax(4, MotorType.kBrushless);
+    //armMotor2 = new SparkMax(7, MotorType.kBrushless);
 
     armMotor1Config = new SparkMaxConfig();
     armMotor2Config = new SparkMaxConfig();
@@ -40,32 +41,40 @@ public class Arm extends SubsystemBase {
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
-    armMotor2.configure(armMotor2Config.
-      follow(armMotor1, true).
-      idleMode(IdleMode.kBrake), 
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
+    // armMotor2.configure(armMotor2Config.
+    //   follow(armMotor1, true).
+    //   idleMode(IdleMode.kBrake), 
+    //   ResetMode.kNoResetSafeParameters, 
+    //   PersistMode.kPersistParameters);
 
-    encoder = new DutyCycleEncoder(0);
-    armP = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
+    encoder = new DutyCycleEncoder(4);
+    //armP = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
 
   }
 
-
-  public Command moveArmToPosition(Double position) {
+  public Command nudgeMotor(Double nudge){
     return run(
-        () -> {
-          
-          // Get the target position, clamped to (limited between) the lowest and highest arm positions
-          Double target = MathUtil.clamp(position, ArmConstants.armRearLimit, ArmConstants.armFrontLimit);
-
-          // Calculate the PID result, and clamp to the arm's maximum velocity limit.
-          Double result =  MathUtil.clamp(armP.calculate(encoder.get(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
-
-          armMotor1.set(result);
-
-        });
+      () -> {
+        System.out.println("nudge");
+        armMotor1.set(armMotor1.get() + nudge);
+      }
+    );
   }
+
+  // public Command moveArmToPosition(Double position) {
+  //   return run(
+  //       () -> {
+          
+  //         // Get the target position, clamped to (limited between) the lowest and highest arm positions
+  //         Double target = MathUtil.clamp(position, ArmConstants.armRearLimit, ArmConstants.armFrontLimit);
+
+  //         // Calculate the PID result, and clamp to the arm's maximum velocity limit.
+  //         Double result =  MathUtil.clamp(armP.calculate(encoder.get(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
+
+  //         armMotor1.set(result);
+
+  //       });
+  //}
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
@@ -75,6 +84,9 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putNumber("encoder", encoder.get());
+    SmartDashboard.putNumber("motor encoder?", armMotor1.getEncoder().getPosition());
     // This method will be called once per scheduler run
   }
 
