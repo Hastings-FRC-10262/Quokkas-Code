@@ -13,34 +13,19 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Intake extends SubsystemBase {
-  SparkMax intakeMotorRight, intakeMotorLeft;
-  SparkMaxConfig intakeMotorRightConfig, intakeMotorLeftConfig;
+  Spark intakeMotorRight, intakeMotorLeft;
 
 
   /** Creates a new Intake. */
   public Intake() {
-    intakeMotorRight = new SparkMax(7, MotorType.kBrushed);
-    intakeMotorLeft = new SparkMax(6, MotorType.kBrushed);
+    intakeMotorRight = new Spark(7); //SparkMax(7, MotorType.kBrushed);
+    intakeMotorLeft = new Spark(6); //SparkMax(6, MotorType.kBrushed);
 
-    intakeMotorRightConfig = new SparkMaxConfig();
-    intakeMotorLeftConfig = new SparkMaxConfig();
-
-
-    intakeMotorRight.configure(intakeMotorRightConfig.
-      inverted(false).
-      idleMode(IdleMode.kBrake), 
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
-
-    intakeMotorLeft.configure(intakeMotorLeftConfig.
-      idleMode(IdleMode.kBrake).
-      follow(7), 
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
-
-
+    intakeMotorRight.setInverted(false);
+    intakeMotorRight.addFollower(intakeMotorLeft);
   }
 
   public Command moveIntake(Double velocity) {
