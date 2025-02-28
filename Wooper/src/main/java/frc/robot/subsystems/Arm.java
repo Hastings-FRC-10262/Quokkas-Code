@@ -40,9 +40,9 @@ public class Arm extends SubsystemBase {
     //armMotorRightConfig = new SparkMaxConfig();
     //armMotorLeftConfig = new SparkMaxConfig();
 
-    armMotorRight.setSafetyEnabled(true);
-    armMotorLeft.setSafetyEnabled(true);
-    armMotorRight.setInverted(true);
+    armMotorRight.setSafetyEnabled(false);
+    armMotorLeft.setSafetyEnabled(false);
+    armMotorLeft.setInverted(true);
     armMotorRight.addFollower(armMotorLeft);
 
 
@@ -60,19 +60,25 @@ public class Arm extends SubsystemBase {
     //   ResetMode.kNoResetSafeParameters, 
     //   PersistMode.kPersistParameters);
 
-    encoder = new DutyCycleEncoder(5); //CHECK PORT!!
+    encoder = new DutyCycleEncoder(5); 
+    encoder.setInverted(true);
+
     armP = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
 
+  }
+
+  public double getAdjustedEncoder(){
+    return encoder.get() - ArmConstants.armEncoderOffset;
   }
 
   public Command moveArm(Double velocity){
     return run(
       () -> {
-        Double result =  MathUtil.clamp(velocity, -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
+        //Double result =  MathUtil.clamp(velocity, -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
 
         
-
-        armMotorRight.set(result);
+        
+        armMotorRight.set(velocity);
       }
     );
   }
@@ -85,7 +91,7 @@ public class Arm extends SubsystemBase {
           Double target = MathUtil.clamp(position, ArmConstants.armRearLimit, ArmConstants.armFrontLimit);
 
           // Calculate the PID result, and clamp to the arm's maximum velocity limit.
-          Double result =  MathUtil.clamp(armP.calculate(encoder.get(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
+          Double result =  MathUtil.clamp(armP.calculate(getAdjustedEncoder(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
 
           armMotorRight.set(result);
 
@@ -101,7 +107,8 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("encoder arm", encoder.get());
+    SmartDashboard.putNumber("arm encoder adjusted", getAdjustedEncoder());
+    SmartDashboard.putNumber("arm encoder raw", encoder.get());
   }
 
   @Override

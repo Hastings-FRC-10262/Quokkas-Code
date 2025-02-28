@@ -54,26 +54,30 @@ public class RobotContainer {
 
     // *** Arm bindings ***
 
-    // m_driverController.y()
-    //   .onTrue(m_arm.moveArm(.2));
+    m_arm.setDefaultCommand(m_arm.moveArm(0.0));
+    
+    m_driverController.y()
+      .onTrue(m_arm.moveArm(.4));
 
-    // m_driverController.b()
-    //   .onTrue(m_arm.moveArm(-.2));
+    m_driverController.b()
+      .onTrue(m_arm.moveArm(-.4));
 
+    
 
+    
 
 
     // Move to intake coral with Y
     // m_driverController.y()
     //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
 
-    // Move to intake algae with X
-    m_driverController.x()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
+    // // Move to intake algae with X
+    // m_driverController.x()
+    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
 
-    // Move to remove low-reef algae and dump L1 coral with B
-    m_driverController.b()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
+    // // Move to remove low-reef algae and dump L1 coral with B
+    // m_driverController.b()
+    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
 
     // // Move to remove high-reef algae with A
     // m_driverController.a()
@@ -92,14 +96,16 @@ public class RobotContainer {
     // Default behaviour (do nothing)
     m_intake.setDefaultCommand(m_intake.moveIntake(0.0));
 
-    // Run intake with right bumper button
-    m_driverController.rightBumper()
-      .and(m_driverController.rightTrigger().negate())
+    //m_driverController.povDown(m_intake.moveIntake(0.75));
+
+    //Run intake with right bumper button I CHANGED POVUP DOESNT MATCH
+    m_driverController.povUp()
+      .and(m_driverController.povDown().negate())
       .whileTrue(m_intake.moveIntake(0.75));
 
     // Run intake in reverse with right trigger button
-    m_driverController.rightTrigger()
-      .and(m_driverController.rightBumper().negate()) 
+    m_driverController.povDown()
+      .and(m_driverController.povUp().negate()) 
       .whileTrue(m_intake.moveIntake(-0.75));
 
 

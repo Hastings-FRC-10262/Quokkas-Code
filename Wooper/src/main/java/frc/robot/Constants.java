@@ -31,7 +31,9 @@ public final class Constants {
       public static Double armRearLimit             = 0.05;
 
       // Define Arm velocity limit
-      public static Double armVelocityLimit         = 0.3; //changed from .8 because im scared
+      public static Double armVelocityLimit         = 0.7; //changed from .8 because im scared
+
+      public static Double armEncoderOffset         = 0.0; //SET VALUE!!
 
       // Define Arm PID constants
       public static Double armkP                    = 17.5;
