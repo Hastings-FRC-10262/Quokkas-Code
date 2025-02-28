@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 import com.revrobotics.spark.SparkMax;
@@ -17,17 +18,20 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-public class DriveTrain extends SubsystemBase {
-  Spark leftFront, leftRear, rightFront, rightRear;
-  //SparkMaxConfig leftFrontConfig, leftRearConfig, rightFrontConfig, rightRearConfig;
 
+import edu.wpi.first.wpilibj.PWM;
+
+
+public class DriveTrain extends SubsystemBase {
+  PWMSparkMax leftFront, leftRear, rightFront, rightRear;
+  //SparkMaxConfig leftFrontConfig, leftRearConfig, rightFrontConfig, rightRearConfig;
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
-    leftFront = new Spark(0);
-    leftRear = new Spark(1);
-    rightFront = new Spark(2);
-    rightRear = new Spark(3);
+    leftFront = new PWMSparkMax(0);
+    leftRear = new PWMSparkMax(1);
+    rightFront = new PWMSparkMax(2);
+    rightRear = new PWMSparkMax(3);
 
     leftFront.setInverted(true);
     //leftFront.setSafetyEnabled(true);

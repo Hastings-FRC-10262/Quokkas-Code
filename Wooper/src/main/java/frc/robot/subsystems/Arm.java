@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,10 +21,10 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
+import edu.wpi.first.wpilibj.PWM;
 
 public class Arm extends SubsystemBase {
-  Spark armMotorRight, armMotorLeft;
+  PWMSparkMax armMotorRight, armMotorLeft;
   //SparkMaxConfig armMotorRightConfig, armMotorLeftConfig;
   DutyCycleEncoder encoder;
   PIDController armP;
@@ -32,8 +33,8 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
-    armMotorRight = new Spark(5);
-    armMotorLeft = new Spark(4);
+    armMotorRight = new PWMSparkMax(5);
+    armMotorLeft = new PWMSparkMax(4);
 
     //look into PWMSparkMax library
 
