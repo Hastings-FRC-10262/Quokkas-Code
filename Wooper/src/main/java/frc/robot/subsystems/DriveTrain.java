@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,45 +18,60 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class DriveTrain extends SubsystemBase {
-  SparkMax leftFront, leftRear, rightFront, rightRear;
-  SparkMaxConfig leftFrontConfig, leftRearConfig, rightFrontConfig, rightRearConfig;
+  Spark leftFront, leftRear, rightFront, rightRear;
+  //SparkMaxConfig leftFrontConfig, leftRearConfig, rightFrontConfig, rightRearConfig;
 
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
-    leftFront = new SparkMax(4, MotorType.kBrushless);
-    leftRear = new SparkMax(3, MotorType.kBrushless);
-    rightFront = new SparkMax(2, MotorType.kBrushless);
-    rightRear = new SparkMax(1, MotorType.kBrushless);
+    leftFront = new Spark(0);
+    leftRear = new Spark(1);
+    rightFront = new Spark(2);
+    rightRear = new Spark(3);
 
-    leftFrontConfig = new SparkMaxConfig();
-    leftRearConfig = new SparkMaxConfig();
-    rightFrontConfig = new SparkMaxConfig();
-    rightRearConfig = new SparkMaxConfig();
+    leftFront.setInverted(true);
+    //leftFront.setSafetyEnabled(true);
+    leftFront.addFollower(leftRear);
 
-    leftFront.configure(leftFrontConfig.
-      inverted(true).
-      idleMode(IdleMode.kBrake), 
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
+    //leftRear.setSafetyEnabled(true);
 
-    leftRear.configure(leftRearConfig.
-      idleMode(IdleMode.kBrake).
-      follow(4),
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
 
-    rightFront.configure(rightFrontConfig.
-      inverted(false).
-      idleMode(IdleMode.kBrake), 
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
+    rightFront.setInverted(true);
+    //rightFront.setSafetyEnabled(true);
+    rightFront.addFollower(rightRear);
 
-    rightRear.configure(rightRearConfig.
-      idleMode(IdleMode.kBrake).
-      follow(2),
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
+    //rightRear.setSafetyEnabled(true);
+
+    // leftFrontConfig = new SparkMaxConfig();
+    // leftRearConfig = new SparkMaxConfig();
+    // rightFrontConfig = new SparkMaxConfig();
+    // rightRearConfig = new SparkMaxConfig();
+
+    // leftFront.configure(leftFrontConfig.
+    //   inverted(true).
+    //   idleMode(IdleMode.kBrake), 
+    //   ResetMode.kNoResetSafeParameters, 
+    //   PersistMode.kPersistParameters);
+
+    // leftRear.configure(leftRearConfig.
+    //   idleMode(IdleMode.kBrake).
+    //   follow(0),
+    //   ResetMode.kNoResetSafeParameters, 
+    //   PersistMode.kPersistParameters);
+
+    
+
+    // rightFront.configure(rightFrontConfig.
+    //   inverted(false).
+    //   idleMode(IdleMode.kBrake), 
+    //   ResetMode.kNoResetSafeParameters, 
+    //   PersistMode.kPersistParameters);
+
+    // rightRear.configure(rightRearConfig.
+    //   idleMode(IdleMode.kBrake).
+    //   follow(2),
+    //   ResetMode.kNoResetSafeParameters, 
+    //   PersistMode.kPersistParameters);
 
   }
 
@@ -65,7 +82,7 @@ public class DriveTrain extends SubsystemBase {
     return run(
         () -> {
           
-          leftFront.set(left.getAsDouble());
+          leftFront.set(-left.getAsDouble());
           rightFront.set(right.getAsDouble());
         });
   }

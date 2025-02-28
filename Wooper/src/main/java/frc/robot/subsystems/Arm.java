@@ -8,19 +8,23 @@ import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 
 public class Arm extends SubsystemBase {
-  SparkMax armMotor1, armMotor2;
-  SparkMaxConfig armMotor1Config, armMotor2Config;
+  Spark armMotorRight, armMotorLeft;
+  //SparkMaxConfig armMotorRightConfig, armMotorLeftConfig;
   DutyCycleEncoder encoder;
   PIDController armP;
   Double armFrontLimit, armRearLimit, armVelocityLimit;
@@ -28,29 +32,50 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
-    armMotor1 = new SparkMax(6, MotorType.kBrushed);
-    armMotor2 = new SparkMax(7, MotorType.kBrushed);
+    armMotorRight = new Spark(5);
+    armMotorLeft = new Spark(4);
 
-    armMotor1Config = new SparkMaxConfig();
-    armMotor2Config = new SparkMaxConfig();
+    //look into PWMSparkMax library
 
-    armMotor1.configure(armMotor1Config.
-      inverted(true).
-      idleMode(IdleMode.kBrake), 
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
+    //armMotorRightConfig = new SparkMaxConfig();
+    //armMotorLeftConfig = new SparkMaxConfig();
 
-    armMotor2.configure(armMotor2Config.
-      follow(armMotor1, true).
-      idleMode(IdleMode.kBrake), 
-      ResetMode.kNoResetSafeParameters, 
-      PersistMode.kPersistParameters);
+    armMotorRight.setSafetyEnabled(true);
+    armMotorLeft.setSafetyEnabled(true);
+    armMotorRight.setInverted(true);
+    armMotorRight.addFollower(armMotorLeft);
 
-    encoder = new DutyCycleEncoder(0);
+
+    
+
+    // armMotorRight.configure(armMotorRightConfig.
+    //   inverted(true).
+    //   idleMode(IdleMode.kBrake), 
+    //   ResetMode.kNoResetSafeParameters, 
+    //   PersistMode.kPersistParameters);
+
+    // armMotorLeft.configure(armMotorLeftConfig.
+    //   follow(armMotorRight, true).
+    //   idleMode(IdleMode.kBrake), 
+    //   ResetMode.kNoResetSafeParameters, 
+    //   PersistMode.kPersistParameters);
+
+    encoder = new DutyCycleEncoder(5); //CHECK PORT!!
     armP = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
 
   }
 
+  public Command moveArm(Double velocity){
+    return run(
+      () -> {
+        Double result =  MathUtil.clamp(velocity, -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
+
+        
+
+        armMotorRight.set(result);
+      }
+    );
+  }
 
   public Command moveArmToPosition(Double position) {
     return run(
@@ -62,7 +87,7 @@ public class Arm extends SubsystemBase {
           // Calculate the PID result, and clamp to the arm's maximum velocity limit.
           Double result =  MathUtil.clamp(armP.calculate(encoder.get(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
 
-          armMotor1.set(result);
+          armMotorRight.set(result);
 
         });
   }
@@ -76,6 +101,7 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("encoder arm", encoder.get());
   }
 
   @Override

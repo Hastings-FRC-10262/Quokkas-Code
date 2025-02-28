@@ -23,7 +23,7 @@ public class RobotContainer {
   private final DriveTrain m_drive = new DriveTrain();
   private final Arm m_arm = new Arm();
   private final Intake m_intake = new Intake();
-  private final Climber m_climber = new Climber();
+  //private final Climber m_climber = new Climber();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -50,12 +50,22 @@ public class RobotContainer {
     // Default behaviour (follow Y-axes of joysticks to implement tank drive)
     m_drive.setDefaultCommand(m_drive.driveTank(m_driverController::getLeftY, m_driverController::getRightY));    
     
+    
 
     // *** Arm bindings ***
 
+    // m_driverController.y()
+    //   .onTrue(m_arm.moveArm(.2));
+
+    // m_driverController.b()
+    //   .onTrue(m_arm.moveArm(-.2));
+
+
+
+
     // Move to intake coral with Y
-    m_driverController.y()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
+    // m_driverController.y()
+    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
 
     // Move to intake algae with X
     m_driverController.x()
@@ -65,17 +75,17 @@ public class RobotContainer {
     m_driverController.b()
       .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
 
-    // Move to remove high-reef algae with A
-    m_driverController.a()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
+    // // Move to remove high-reef algae with A
+    // m_driverController.a()
+    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
 
-    // Move to start climb with D-Pad Down
-    m_driverController.povDown()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbStart));
+    // // Move to start climb with D-Pad Down
+    // m_driverController.povDown()
+    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbStart));
 
-    // Move to finish climb with D-Pad up
-    m_driverController.povUp()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbEnd));
+    // // Move to finish climb with D-Pad up
+    // m_driverController.povUp()
+    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbEnd));
 
     
     // *** Intake bindings ***
@@ -95,17 +105,17 @@ public class RobotContainer {
 
     // *** Climber bindings ***
     // Default behaviour (do nothing)
-    m_climber.setDefaultCommand(m_climber.moveClimber(0.0));
+    //m_climber.setDefaultCommand(m_climber.moveClimber(0.0));
 
     // Disengage climber with back button
-    m_driverController.leftBumper()
-      .and(m_driverController.leftTrigger().negate())
-      .whileTrue(m_climber.moveClimber(0.5));
+    // m_driverController.leftBumper()
+    //   .and(m_driverController.leftTrigger().negate())
+    //   .whileTrue(m_climber.moveClimber(0.5));
 
-    // Engage climber with start buttom
-    m_driverController.leftTrigger()
-      .and(m_driverController.leftBumper().negate())
-      .whileTrue(m_climber.moveClimber(-0.5));
+    // // Engage climber with start buttom
+    // m_driverController.leftTrigger()
+    //   .and(m_driverController.leftBumper().negate())
+    //   .whileTrue(m_climber.moveClimber(-0.5));
 
   }
 
