@@ -22,10 +22,10 @@ public class DriveTrain extends SubsystemBase {
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
-    leftFront = new SparkMax(4, MotorType.kBrushless);
-    leftRear = new SparkMax(3, MotorType.kBrushless);
-    rightFront = new SparkMax(2, MotorType.kBrushless);
-    rightRear = new SparkMax(1, MotorType.kBrushless);
+    leftFront = new SparkMax(4, MotorType.kBrushed);
+    leftRear = new SparkMax(10, MotorType.kBrushed);
+    rightFront = new SparkMax(2, MotorType.kBrushed);
+    rightRear = new SparkMax(1, MotorType.kBrushed);
 
     leftFrontConfig = new SparkMaxConfig();
     leftRearConfig = new SparkMaxConfig();

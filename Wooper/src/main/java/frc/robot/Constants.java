@@ -34,8 +34,8 @@ public final class Constants {
       public static Double armVelocityLimit         = 0.8;
 
       // Define Arm PID constants
-      public static Double armkP                    = 17.5;
+      public static Double armkP                    = 0.0;
       public static Double armkI                    = 0.0;
-      public static Double armkD                    = 0.8;
+      public static Double armkD                    = 0.0;
   }
 }
