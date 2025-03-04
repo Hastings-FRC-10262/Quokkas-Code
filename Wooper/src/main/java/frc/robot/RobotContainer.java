@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -50,7 +51,7 @@ public class RobotContainer {
     // Default behaviour (follow Y-axes of joysticks to implement tank drive)
     
     
-    drive.setDefaultCommand(drive.driveTank(driverController::getLeftY, driverController::getRightX));    
+    drive.setDefaultCommand(drive.driveArcade(driverController::getLeftY, driverController::getRightX));    
     
 
     // *** Arm bindings ***
@@ -65,6 +66,8 @@ public class RobotContainer {
 
     driverController.x().onTrue(arm.moveArm(0.0));
     
+
+
     // // Move to intake coral with Y
     // m_driverController.y()
     //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
@@ -97,7 +100,12 @@ public class RobotContainer {
     driverController.rightTrigger()
       .and(driverController.rightBumper().negate()) 
       .whileTrue(intake.moveIntake(-0.25));
-
+    
+    driverController.leftBumper()
+      .onTrue(arm.moveArmToPosition(ArmConstants.testPosition30));
+    
+    driverController.leftTrigger()
+      .onTrue(arm.moveArmToPosition(ArmConstants.testPosition60));
   }
 
   /**

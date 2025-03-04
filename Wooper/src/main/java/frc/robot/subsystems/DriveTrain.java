@@ -76,11 +76,11 @@ public class DriveTrain extends SubsystemBase {
     return run(
       () -> {
 
-        Double left = linear.getAsDouble() + turn.getAsDouble();
-        Double right = linear.getAsDouble() - turn.getAsDouble();
+        Double left = linear.getAsDouble()*6 + turn.getAsDouble()*3;
+        Double right = linear.getAsDouble()*6 - turn.getAsDouble()*3;
 
         leftFront.set(0.3 * left);
-        rightFront.set(2);
+        rightFront.set(0.3 * right);
       });
   }
 

@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.Revolutions;
@@ -46,6 +47,9 @@ public class Arm extends SubsystemBase {
       PersistMode.kPersistParameters);
 
     armMotorRightConfig.smartCurrentLimit(currentLimit);
+    //armMotorRightConfig.encoder.positionConversionFactor(1/360.0);
+    //armMotorRightConfig.encoder.velocityConversionFactor(1/60.0);
+    
 
     armMotorLeft.configure(armMotorLeftConfig.
       inverted(true).
@@ -57,11 +61,13 @@ public class Arm extends SubsystemBase {
     armMotorLeftConfig.smartCurrentLimit(currentLimit);
 
     encoder = armMotorRight.getEncoder();
+    
   
-    encoder.setPosition(0);
+    encoder.setPosition(.25 * 360);
+    
 
     armPID = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
-    
+    armPID.setTolerance(0.05);
     }
     
     
@@ -84,19 +90,19 @@ public class Arm extends SubsystemBase {
   }
 
   public Command moveArmToPosition(Double position) {
-    return run(
+    return Commands.run(
         () -> {
           
           // Get the target position, clamped to (limited between) the lowest and highest arm positions
           Double target = MathUtil.clamp(position, ArmConstants.armRearLimit, ArmConstants.armFrontLimit);
 
           // Calculate the PID result, and clamp to the arm's maximum velocity limit.
-          Double result =  MathUtil.clamp(armPID.calculate(encoder.getPosition(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
+          Double result =  MathUtil.clamp(armPID.calculate(getArmRevolution(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
 
           armMotorRight.set(result);
 
           
-        });
+        }).until(() -> armPID.atSetpoint());
   }
 
   /**
