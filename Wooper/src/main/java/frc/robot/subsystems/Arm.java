@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static edu.wpi.first.units.Units.Revolutions;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.*;
@@ -21,8 +23,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 
 public class Arm extends SubsystemBase {
-  SparkMax armMotor1, armMotor2;
-  SparkMaxConfig armMotor1Config, armMotor2Config;
+  SparkMax armMotorRight, armMotorLeft;
+  SparkMaxConfig armMotorRightConfig, armMotorLeftConfig;
   RelativeEncoder encoder;
   PIDController armPID;
   Double armFrontLimit, armRearLimit, armVelocityLimit;
@@ -31,45 +33,54 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
-    armMotor1 = new SparkMax(8, MotorType.kBrushless);
-    armMotor2 = new SparkMax(7, MotorType.kBrushless);
+    armMotorRight = new SparkMax(8, MotorType.kBrushless);
+    armMotorLeft = new SparkMax(7, MotorType.kBrushless);
 
-    armMotor1Config = new SparkMaxConfig();
-    armMotor2Config = new SparkMaxConfig();
+    armMotorRightConfig = new SparkMaxConfig();
+    armMotorLeftConfig = new SparkMaxConfig();
 
-    armMotor1.configure(armMotor1Config.
-      //inverted(true).
+    armMotorRight.configure(armMotorRightConfig.
+      inverted(false).
       idleMode(IdleMode.kBrake), 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
-    armMotor1Config.smartCurrentLimit(currentLimit);
+    armMotorRightConfig.smartCurrentLimit(currentLimit);
 
-    armMotor2.configure(armMotor2Config.
+    armMotorLeft.configure(armMotorLeftConfig.
       inverted(true).
-      follow(armMotor1, true).
+      follow(armMotorRight, true).
       idleMode(IdleMode.kBrake), 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
-    armMotor2Config.smartCurrentLimit(currentLimit);
+    armMotorLeftConfig.smartCurrentLimit(currentLimit);
 
-    encoder = armMotor1.getEncoder();
-    
+    encoder = armMotorRight.getEncoder();
+  
+    encoder.setPosition(0);
 
     armPID = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
-
-  }
-
-
+    
+    }
+    
+    
+      private double getArmRevolution() {
+        
+        return encoder.getPosition() / 360.0;        
+      }
+    
+    
   public Command moveArm(Double velocity) {
     return run(
       () -> {
 
-        armMotor1.set(velocity);
+        armMotorRight.set(velocity);
         System.out.println("moveArm");
       }
     );
+      
+
   }
 
   public Command moveArmToPosition(Double position) {
@@ -82,8 +93,9 @@ public class Arm extends SubsystemBase {
           // Calculate the PID result, and clamp to the arm's maximum velocity limit.
           Double result =  MathUtil.clamp(armPID.calculate(encoder.getPosition(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
 
-          armMotor1.set(result);
+          armMotorRight.set(result);
 
+          
         });
   }
 
@@ -97,6 +109,7 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("arm encoder raw", encoder.getPosition());
+    SmartDashboard.putNumber("arm encoder real", getArmRevolution());
     //SmartDashboard.putBoolean("setpoint", e)
   }
 

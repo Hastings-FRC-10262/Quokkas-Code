@@ -15,26 +15,30 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 
 public class Intake extends SubsystemBase {
-  SparkMax intakeMotor;
-  SparkMaxConfig intakeMotorConfig;
+  SparkMax intakeMotorRight, intakeMotorLeft;
+  SparkMaxConfig intakeMotorRightConfig, intakeMotorLeftConfig;
 
 
   /** Creates a new Intake. */
   public Intake() {
-    intakeMotor = new SparkMax(8, MotorType.kBrushless);
-    
+    intakeMotorRight = new SparkMax(5, MotorType.kBrushless);
+    intakeMotorLeft = new SparkMax(4, MotorType.kBrushless);
 
-    intakeMotorConfig = new SparkMaxConfig();
-    
-    intakeMotor.configure(intakeMotorConfig.
+    intakeMotorRightConfig = new SparkMaxConfig();
+    intakeMotorLeftConfig = new SparkMaxConfig();
+
+    intakeMotorRight.configure(intakeMotorRightConfig.
       inverted(false).
       idleMode(IdleMode.kBrake), 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
-    
-
-
+    intakeMotorLeft.configure(intakeMotorLeftConfig.
+      inverted(false).
+      follow(intakeMotorRight).
+      idleMode(IdleMode.kBrake), 
+      ResetMode.kNoResetSafeParameters, 
+      PersistMode.kPersistParameters);
   }
 
   public Command moveIntake(Double velocity) {
@@ -42,7 +46,7 @@ public class Intake extends SubsystemBase {
     return run(
         () -> {
           System.out.println("intake moved");
-          intakeMotor.set(velocity);
+          intakeMotorRight.set(velocity);
         });
   }
 

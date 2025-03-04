@@ -22,10 +22,10 @@ public class DriveTrain extends SubsystemBase {
 
   /** Creates a new DriveTrain. */
   public DriveTrain() {
-    leftFront = new SparkMax(4, MotorType.kBrushed);
-    leftRear = new SparkMax(10, MotorType.kBrushed);
+    leftFront = new SparkMax(6, MotorType.kBrushed);
+    leftRear = new SparkMax(3, MotorType.kBrushed);
     rightFront = new SparkMax(2, MotorType.kBrushed);
-    rightRear = new SparkMax(1, MotorType.kBrushed);
+    rightRear = new SparkMax(9, MotorType.kBrushed);
 
     leftFrontConfig = new SparkMaxConfig();
     leftRearConfig = new SparkMaxConfig();
@@ -33,26 +33,28 @@ public class DriveTrain extends SubsystemBase {
     rightRearConfig = new SparkMaxConfig();
 
     leftFront.configure(leftFrontConfig.
-      inverted(true).
+    inverted(false).
       idleMode(IdleMode.kBrake), 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
     leftRear.configure(leftRearConfig.
+      inverted(true).
       idleMode(IdleMode.kBrake).
-      follow(4),
+      follow(leftFront),
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
     rightFront.configure(rightFrontConfig.
-      inverted(false).
+      inverted(true).
       idleMode(IdleMode.kBrake), 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
     rightRear.configure(rightRearConfig.
+      inverted(true).
       idleMode(IdleMode.kBrake).
-      follow(2),
+      follow(rightFront),
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
@@ -65,9 +67,21 @@ public class DriveTrain extends SubsystemBase {
     return run(
         () -> {
           
-          leftFront.set(left.getAsDouble());
-          rightFront.set(right.getAsDouble());
+          leftFront.set(0.3 * left.getAsDouble());
+          rightFront.set(0.3 * right.getAsDouble());
         });
+  }
+
+  public Command driveArcade(DoubleSupplier linear, DoubleSupplier turn) {
+    return run(
+      () -> {
+
+        Double left = linear.getAsDouble() + turn.getAsDouble();
+        Double right = linear.getAsDouble() - turn.getAsDouble();
+
+        leftFront.set(0.3 * left);
+        rightFront.set(2);
+      });
   }
 
   public Command moveStraight(Double velocity) {

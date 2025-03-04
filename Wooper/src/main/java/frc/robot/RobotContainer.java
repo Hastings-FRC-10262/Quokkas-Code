@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  //private final DriveTrain drive = new DriveTrain();
+  private final DriveTrain drive = new DriveTrain();
   private final Arm arm = new Arm();
-  //private final Intake intake = new Intake();
+  private final Intake intake = new Intake();
   
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -50,7 +50,7 @@ public class RobotContainer {
     // Default behaviour (follow Y-axes of joysticks to implement tank drive)
     
     
-    //drive.setDefaultCommand(drive.driveTank(driverController::getLeftY, driverController::getRightY));    
+    drive.setDefaultCommand(drive.driveTank(driverController::getLeftY, driverController::getRightX));    
     
 
     // *** Arm bindings ***
@@ -59,9 +59,9 @@ public class RobotContainer {
 
     //Manually move arm slowly 
     //arm.setDefaultCommand(arm.moveArm(driverController.getLeftY()));
-    driverController.b().onTrue(arm.moveArm(0.1));
+    driverController.b().onTrue(arm.moveArm(0.15));
 
-    driverController.y().onTrue(arm.moveArm(-0.1));
+    driverController.y().onTrue(arm.moveArm(-0.15));
 
     driverController.x().onTrue(arm.moveArm(0.0));
     
@@ -86,17 +86,17 @@ public class RobotContainer {
     
     // *** Intake bindings ***
     // Default behaviour (do nothing)
-    // m_intake.setDefaultCommand(m_intake.moveIntake(0.0));
+    intake.setDefaultCommand(intake.moveIntake(0.0));
 
-    // // Run intake with right bumper button
-    // m_driverController.rightBumper()
-    //   .and(m_driverController.rightTrigger().negate())
-    //   .whileTrue(m_intake.moveIntake(0.75));
+    // Run intake with right bumper button
+    driverController.rightBumper()
+      .and(driverController.rightTrigger().negate())
+      .whileTrue(intake.moveIntake(0.25));
 
-    // // Run intake in reverse with right trigger button
-    // m_driverController.rightTrigger()
-    //   .and(m_driverController.rightBumper().negate()) 
-    //   .whileTrue(m_intake.moveIntake(-0.75));
+    // Run intake in reverse with right trigger button
+    driverController.rightTrigger()
+      .and(driverController.rightBumper().negate()) 
+      .whileTrue(intake.moveIntake(-0.25));
 
   }
 

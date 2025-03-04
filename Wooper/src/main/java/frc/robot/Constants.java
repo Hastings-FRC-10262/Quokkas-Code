@@ -27,8 +27,8 @@ public final class Constants {
       public static Double positionRemoveAlgaeHigh  = 0.1;
 
       // Define Arm position limits
-      public static Double armFrontLimit            = 0.422;
-      public static Double armRearLimit             = 0.05;
+      public static Double armFrontLimit            = 0.3;
+      public static Double armRearLimit             = 0.15;
 
       // Define Arm velocity limit
       public static Double armVelocityLimit         = 0.8;
