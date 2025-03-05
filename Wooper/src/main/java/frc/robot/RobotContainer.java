@@ -31,7 +31,7 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   private final CommandXboxController mechanismController =
-      new CommandXboxController(1);
+      new CommandXboxController(OperatorConstants.kMechanismControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -63,11 +63,11 @@ public class RobotContainer {
 
     //Manually move arm slowly 
     //arm.setDefaultCommand(arm.moveArm(driverController.getLeftY()));
-    driverController.b().onTrue(arm.moveArm(0.15));
+    mechanismController.b().onTrue(arm.moveArm(0.15));
 
-    driverController.y().onTrue(arm.moveArm(-0.15));
+    mechanismController.y().onTrue(arm.moveArm(-0.15));
 
-    driverController.x().onTrue(arm.moveArm(0.0));
+    mechanismController.x().onTrue(arm.moveArm(0.0));
     
 
 
@@ -95,21 +95,21 @@ public class RobotContainer {
     intake.setDefaultCommand(intake.moveIntake(0.0));
 
     // Run intake with right bumper button
-    driverController.rightBumper()
-      .and(driverController.rightTrigger().negate())
+    mechanismController.rightBumper()
+      .and(mechanismController.rightTrigger().negate())
       .whileTrue(intake.moveIntake(0.25));
 
     // Run intake in reverse with right trigger button
-    driverController.rightTrigger()
-      .and(driverController.rightBumper().negate()) 
+    mechanismController.rightTrigger()
+      .and(mechanismController.rightBumper().negate()) 
       .whileTrue(intake.moveIntake(-0.25));
     
       
     
-      driverController.leftBumper()
+      mechanismController.leftBumper()
       .onTrue(arm.moveArmToPosition(ArmConstants.testPosition60));
       
-      driverController.leftTrigger()
+      mechanismController.leftTrigger()
       .onTrue(arm.moveArmToPosition(ArmConstants.testPosition40));
   }
 
