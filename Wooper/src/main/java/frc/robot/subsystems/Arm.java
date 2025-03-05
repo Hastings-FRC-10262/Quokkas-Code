@@ -63,17 +63,17 @@ public class Arm extends SubsystemBase {
     encoder = armMotorRight.getEncoder();
     
   
-    encoder.setPosition(.25 * 360);
+    encoder.setPosition(90);
     
 
     armPID = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
-    armPID.setTolerance(0.05);
+    armPID.setTolerance(1);
     }
     
     
-      private double getArmRevolution() {
+      private double getArmDegrees() {
         
-        return encoder.getPosition() / 360.0;        
+        return encoder.getPosition();        
       }
     
     
@@ -94,10 +94,10 @@ public class Arm extends SubsystemBase {
         () -> {
           
           // Get the target position, clamped to (limited between) the lowest and highest arm positions
-          Double target = MathUtil.clamp(position, ArmConstants.armRearLimit, ArmConstants.armFrontLimit);
+          Double target = MathUtil.clamp(position, ArmConstants.armFrontLimit, ArmConstants.armRearLimit);
 
           // Calculate the PID result, and clamp to the arm's maximum velocity limit.
-          Double result =  MathUtil.clamp(armPID.calculate(getArmRevolution(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
+          Double result =  MathUtil.clamp(armPID.calculate(getArmDegrees(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
 
           armMotorRight.set(result);
 
@@ -115,8 +115,9 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("arm encoder raw", encoder.getPosition());
-    SmartDashboard.putNumber("arm encoder real", getArmRevolution());
-    //SmartDashboard.putBoolean("setpoint", e)
+    SmartDashboard.putNumber("arm encoder real", getArmDegrees());
+    SmartDashboard.putNumber("setpoint", armPID.getSetpoint());
+    
   }
 
   @Override

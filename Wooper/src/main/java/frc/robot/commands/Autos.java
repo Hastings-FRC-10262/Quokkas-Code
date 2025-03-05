@@ -15,6 +15,8 @@ public final class Autos {
   /** Example static factory for an autonomous command. */
   public static Command autoSideLeft(DriveTrain drive, Arm arm, Intake intake) {
 
+
+    System.out.println("LEFT");
     // Drive straight
     return drive.moveStraight(-0.25).withTimeout(2.75).
 
@@ -28,10 +30,55 @@ public final class Autos {
     andThen(intake.moveIntake(-1.0).withTimeout(3.0)).
 
     // Move backwards with intake still running to dislodge algae
-    andThen(intake.moveIntake(-1.0).withTimeout(3.0).alongWith(drive.moveStraight(0.1).withTimeout(3))).
+    andThen(intake.moveIntake(-1.0).withTimeout(3.0).alongWith(drive.moveStraight(0.1).withTimeout(3)));
 
     // Do all of the above while maintaining arm position at the 'remove low algae' position
-    alongWith(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow)).repeatedly();
+    //alongWith(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow)).repeatedly();
+  }
+  public static Command autoSideMiddle(DriveTrain drive, Arm arm, Intake intake){
+    // Drive straight
+
+    System.out.println("MID");
+
+    return drive.moveStraight(-0.25).withTimeout(2.75).
+
+    
+
+    // Move to reef wall
+    andThen(drive.moveStraight(-0.20).withTimeout(1.0)).
+    //need to find the angle for what the arm should be
+    // Run intake while flush with reef wall, depositing L1 coral
+    andThen(intake.moveIntake(-1.0).withTimeout(3.0)).
+    //turn around
+    andThen(drive.turn(-0.20).withTimeout(1.0)).
+    
+    andThen(drive.moveStraight(-0.20).withTimeout(1.0)).
+
+    // Move backwards with intake still running to dislodge algae
+    andThen(intake.moveIntake(-1.0).withTimeout(3.0).alongWith(drive.moveStraight(0.1).withTimeout(3)));
+
+    // Do all of the above while maintaining arm position at the 'remove low algae' position
+    //alongWith(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow)).repeatedly();
+  }
+  public static Command autoSideRight(DriveTrain drive, Arm arm, Intake intake){
+    // Drive straight
+    return drive.moveStraight(-0.25).withTimeout(2.75).
+
+    // Move to reef wall
+    andThen(drive.moveStraight(-0.20).withTimeout(1.0)).
+    //need to find the angle for what the arm should be
+    // Run intake while flush with reef wall, depositing L1 coral
+    andThen(intake.moveIntake(-1.0).withTimeout(3.0)).
+    //turn around
+    andThen(drive.turn(-0.20).withTimeout(1.0)).
+    
+    andThen(drive.moveStraight(-0.20).withTimeout(1.0)).
+
+    // Move backwards with intake still running to dislodge algae
+    andThen(intake.moveIntake(-1.0).withTimeout(3.0).alongWith(drive.moveStraight(0.1).withTimeout(3)));
+
+    // Do all of the above while maintaining arm position at the 'remove low algae' position
+    //alongWith(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow)).repeatedly();
   }
 
   private Autos() {

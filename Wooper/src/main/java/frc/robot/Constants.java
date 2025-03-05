@@ -26,7 +26,7 @@ public final class Constants {
       // public static Double positionClimbStart       = 0.233;
       // public static Double positionRemoveAlgaeHigh  = 0.1;
 
-      public static Double testPosition30 = 30.0;
+      public static Double testPosition40 = 40.0;
       public static Double testPosition60 = 60.0;
 
       // Define Arm position limits
@@ -37,7 +37,7 @@ public final class Constants {
       public static Double armVelocityLimit         = 0.8;
 
       // Define Arm PID constants
-      public static Double armkP                    = 0.0;
+      public static Double armkP                    = 0.03;
       public static Double armkI                    = 0.0;
       public static Double armkD                    = 0.0;
   }

@@ -30,6 +30,9 @@ public class RobotContainer {
   private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  private final CommandXboxController mechanismController =
+      new CommandXboxController(1);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -101,11 +104,13 @@ public class RobotContainer {
       .and(driverController.rightBumper().negate()) 
       .whileTrue(intake.moveIntake(-0.25));
     
-    driverController.leftBumper()
-      .onTrue(arm.moveArmToPosition(ArmConstants.testPosition30));
+      
     
-    driverController.leftTrigger()
+      driverController.leftBumper()
       .onTrue(arm.moveArmToPosition(ArmConstants.testPosition60));
+      
+      driverController.leftTrigger()
+      .onTrue(arm.moveArmToPosition(ArmConstants.testPosition40));
   }
 
   /**
