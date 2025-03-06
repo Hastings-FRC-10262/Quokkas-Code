@@ -41,6 +41,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    configureAutos();
   }
 
   /**
@@ -71,12 +72,12 @@ public class RobotContainer {
     // Run intake with right bumper button
     mechanismController.leftBumper()
       .and(mechanismController.leftTrigger().negate())
-      .whileTrue(arm.moveArm(0.15));
+      .whileTrue(arm.moveArm(0.25));
 
     // Run intake in reverse with right trigger button
     mechanismController.leftTrigger()
       .and(mechanismController.leftBumper().negate()) 
-      .whileTrue(arm.moveArm(-0.15));
+      .whileTrue(arm.moveArm(-0.25));
 
 
     // Move to intake coral with Y
@@ -133,6 +134,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;         //Autos.autoSideLeft(drive, arm, intake);
+    return Autos.driveForward(drive, arm, intake);
   }
 }

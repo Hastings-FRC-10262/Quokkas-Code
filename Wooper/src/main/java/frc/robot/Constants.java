@@ -33,7 +33,7 @@ public final class Constants {
 
       // Define Arm position limits
       public static Double armFrontLimit            = 0.0;
-      public static Double armRearLimit             = 140.0;
+      public static Double armRearLimit            = 140.0;
 
       // Define Arm velocity limit
       public static Double armVelocityLimit         = 0.8;
