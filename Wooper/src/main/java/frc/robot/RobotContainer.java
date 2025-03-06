@@ -9,6 +9,8 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -31,7 +33,9 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   private final CommandXboxController mechanismController =
-      new CommandXboxController(OperatorConstants.kMechanismControllerPort);
+      new CommandXboxController(1);
+
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -51,45 +55,46 @@ public class RobotContainer {
   private void configureBindings() {
 
     // *** Drive bindings ***
-    // Default behaviour (follow Y-axes of joysticks to implement tank drive)
-    
-    
     drive.setDefaultCommand(drive.driveArcade(driverController::getLeftY, driverController::getRightX));    
-    
-
-    // *** Arm bindings ***
-
-
-
+ 
     //Manually move arm slowly 
     //arm.setDefaultCommand(arm.moveArm(driverController.getLeftY()));
-    mechanismController.b().onTrue(arm.moveArm(0.15));
+    // mechanismController.b().onTrue(arm.moveArm(0.15));
 
-    mechanismController.y().onTrue(arm.moveArm(-0.15));
+    // mechanismController.y().onTrue(arm.moveArm(-0.15));
 
-    mechanismController.x().onTrue(arm.moveArm(0.0));
+    // mechanismController.x().onTrue(arm.moveArm(0.0));
     
 
+    arm.setDefaultCommand(arm.moveArm(0.0));
+    
+    // Run intake with right bumper button
+    mechanismController.leftBumper()
+      .and(mechanismController.leftTrigger().negate())
+      .whileTrue(arm.moveArm(0.15));
 
-    // // Move to intake coral with Y
-    // m_driverController.y()
-    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
+    // Run intake in reverse with right trigger button
+    mechanismController.leftTrigger()
+      .and(mechanismController.leftBumper().negate()) 
+      .whileTrue(arm.moveArm(-0.15));
+
+
+    // Move to intake coral with Y
+    mechanismController.y()
+      .onTrue(arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
 
     // // Move to intake algae with X
-    // m_driverController.x()
-    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
+    // mechanismController.x()
+    //   .onTrue(arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
 
     // // Move to remove low-reef algae and dump L1 coral with B
-    // m_driverController.b()
-    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
+    // mechanismController.b()
+    //   .onTrue(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
 
     // // Move to remove high-reef algae with A
-    // m_driverController.a()
-    //   .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
+    // mechanismController.a()
+    //   .onTrue(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
 
-
-
-    
     // *** Intake bindings ***
     // Default behaviour (do nothing)
     intake.setDefaultCommand(intake.moveIntake(0.0));
@@ -97,20 +102,29 @@ public class RobotContainer {
     // Run intake with right bumper button
     mechanismController.rightBumper()
       .and(mechanismController.rightTrigger().negate())
-      .whileTrue(intake.moveIntake(0.25));
+      .whileTrue(intake.moveIntake(0.4));
 
     // Run intake in reverse with right trigger button
     mechanismController.rightTrigger()
       .and(mechanismController.rightBumper().negate()) 
-      .whileTrue(intake.moveIntake(-0.25));
+      .whileTrue(intake.moveIntake(-0.4));
     
       
     
-      mechanismController.leftBumper()
+      mechanismController.a()
       .onTrue(arm.moveArmToPosition(ArmConstants.testPosition60));
       
-      mechanismController.leftTrigger()
+      mechanismController.b()
       .onTrue(arm.moveArmToPosition(ArmConstants.testPosition40));
+  }
+
+  public void configureAutos() {
+    autoChooser.setDefaultOption("Do Anything", Autos.driveForward(drive, arm, intake));
+    //autoChooser.addOption("", Autos.);
+    //autoChooser.addOption("", Autos.);
+    //autoChooser.addOption("", Autos.);
+
+    SmartDashboard.putData(autoChooser);
   }
 
   /**

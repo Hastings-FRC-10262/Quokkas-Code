@@ -63,7 +63,7 @@ public class Arm extends SubsystemBase {
     encoder = armMotorRight.getEncoder();
     
   
-    encoder.setPosition(90);
+    encoder.setPosition(56.433);
     
 
     armPID = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);

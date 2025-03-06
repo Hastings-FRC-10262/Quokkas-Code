@@ -12,6 +12,12 @@ import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public final class Autos {
+
+  public static Command driveForward(DriveTrain drive, Arm arm, Intake intake) {
+    return drive.moveStraight(0.25).withTimeout(1.0).andThen(drive.moveStraight(0.0));
+  }
+
+
   /** Example static factory for an autonomous command. */
   public static Command autoSideLeft(DriveTrain drive, Arm arm, Intake intake) {
 
