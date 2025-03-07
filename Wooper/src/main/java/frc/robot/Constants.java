@@ -14,10 +14,10 @@ package frc.robot;
  */
 public final class Constants {
   public static class OperatorConstants {
-    public static Double driveForwardGain = 0.45;
-    public static Double driveTurnGain = 0.3;
+    public static Double driveForwardGain = 0.55;
+    public static Double driveTurnGain = 0.4;
 
-    public static Double armSpeed;
+    public static Double armSpeed = 0.4;
   }
 
   public static class ArmConstants {    

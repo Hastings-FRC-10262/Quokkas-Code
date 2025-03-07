@@ -60,11 +60,11 @@ public class RobotContainer {
     
     mechanismController.leftBumper()
       .and(mechanismController.leftTrigger().negate())
-      .whileTrue(arm.moveArm(0.25));
+      .whileTrue(arm.moveArm(OperatorConstants.armSpeed));
 
     mechanismController.leftTrigger()
       .and(mechanismController.leftBumper().negate()) 
-      .whileTrue(arm.moveArm(-0.25));
+      .whileTrue(arm.moveArm(-1 * OperatorConstants.armSpeed));
 
     //PID bindings
     mechanismController.a()
@@ -96,12 +96,12 @@ public class RobotContainer {
     // Run intake with right bumper button
     mechanismController.rightBumper()
       .and(mechanismController.rightTrigger().negate())
-      .whileTrue(intake.moveIntake(0.4));
+      .whileTrue(intake.moveIntake(0.5));
 
     // Run intake in reverse with right trigger button
     mechanismController.rightTrigger()
       .and(mechanismController.rightBumper().negate()) 
-      .whileTrue(intake.moveIntake(-0.4));
+      .whileTrue(intake.moveIntake(-0.5));
 
   }
 
