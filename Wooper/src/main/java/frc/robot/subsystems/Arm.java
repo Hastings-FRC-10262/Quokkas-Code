@@ -71,9 +71,7 @@ public class Arm extends SubsystemBase {
   public Command moveArm(Double velocity) {
     return run(
       () -> {
-
         armMotorRight.set(velocity);
-        System.out.println("moveArm");
       }
     );
   }

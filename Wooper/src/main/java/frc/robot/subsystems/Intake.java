@@ -45,7 +45,6 @@ public class Intake extends SubsystemBase {
     // Inline construction of command goes here.
     return run(
         () -> {
-          System.out.println("intake moved");
           intakeMotorRight.set(velocity);
         });
   }

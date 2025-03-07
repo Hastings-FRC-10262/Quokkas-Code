@@ -13,8 +13,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public final class Autos {
 
+  
+
   public static Command driveForward(DriveTrain drive, Arm arm, Intake intake) {
-    return drive.moveStraight(0.25).withTimeout(1.0).andThen(drive.moveStraight(0.0));
+    System.out.println("STARTED");
+    return drive.moveStraight(0.25).withTimeout(1.4).andThen(drive.moveStraight(0.0));
   }
 
 
