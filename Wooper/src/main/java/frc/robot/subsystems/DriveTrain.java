@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.OperatorConstants;
 
 import java.util.function.DoubleSupplier;
 
@@ -57,27 +58,24 @@ public class DriveTrain extends SubsystemBase {
       follow(rightFront),
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
-
   }
-
-
  
-  public Command driveTank(DoubleSupplier left, DoubleSupplier right) {
-    // Inline construction of command goes here.
-    return run(
-        () -> {
+  // public Command driveTank(DoubleSupplier left, DoubleSupplier right) {
+  //   // Inline construction of command goes here.
+  //   return run(
+  //       () -> {
           
-          leftFront.set(0.3 * left.getAsDouble());
-          rightFront.set(0.3 * right.getAsDouble());
-        });
-  }
+  //         leftFront.set(0.3 * left.getAsDouble());
+  //         rightFront.set(0.3 * right.getAsDouble());
+  //       });
+  // }
 
   public Command driveArcade(DoubleSupplier linear, DoubleSupplier turn) {
     return run(
       () -> {
 
-        Double left = linear.getAsDouble()*0.45 - turn.getAsDouble()*0.3;
-        Double right = linear.getAsDouble()*0.45 + turn.getAsDouble()*0.3;
+        Double left = linear.getAsDouble() * OperatorConstants.driveForwardGain - turn.getAsDouble() * OperatorConstants.driveTurnGain;
+        Double right = linear.getAsDouble() * OperatorConstants.driveForwardGain + turn.getAsDouble() * OperatorConstants.driveTurnGain;
 
         leftFront.set(left);
         rightFront.set(right);
@@ -100,12 +98,6 @@ public class DriveTrain extends SubsystemBase {
       });
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -114,5 +106,6 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+
   }
 }

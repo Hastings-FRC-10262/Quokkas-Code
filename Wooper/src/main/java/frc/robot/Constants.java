@@ -14,19 +14,21 @@ package frc.robot;
  */
 public final class Constants {
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    public static Double driveForwardGain = 0.45;
+    public static Double driveTurnGain = 0.3;
+
+    public static Double armSpeed;
   }
 
-  public static class ArmConstants {
-      // Define Arm position constants
-      // public static Double positionClimbEnd         = 0.368;
-      // public static Double positionClimbStart       = 0.233;
-      // public static Double positionRemoveAlgaeHigh  = 0.1;
+  public static class ArmConstants {    
+     
+      //Robot starting angle
+      public static Double startingAngle = 54.644;
       
-      public static Double positionIntakeCoral      = 1.0;
-      public static Double positionIntakeAlgae      = 45.0;
-      public static Double positionRemoveAlgaeLow   = 45.0;
-      
+      //Coral PID setpoints
+      public static Double positionFloorIntake            = 1.0;
+      public static Double positionHumanPlayerIntake      = 50.0; //PLACEHOLDER!
+      public static Double positionDepositL1              = 40.0; //PLACEHOLDER!
       
       public static Double testPosition40 = 40.0;
       public static Double testPosition60 = 60.0;

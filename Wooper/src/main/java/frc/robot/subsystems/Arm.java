@@ -61,21 +61,12 @@ public class Arm extends SubsystemBase {
     armMotorLeftConfig.smartCurrentLimit(currentLimit);
 
     encoder = armMotorRight.getEncoder();
-    
-  
-    encoder.setPosition(54.644);
+    encoder.setPosition(ArmConstants.startingAngle);
     
 
     armPID = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
     armPID.setTolerance(1);
     }
-    
-    
-      private double getArmDegrees() {
-        
-        return encoder.getPosition();        
-      }
-    
     
   public Command moveArm(Double velocity) {
     return run(
@@ -85,8 +76,6 @@ public class Arm extends SubsystemBase {
         System.out.println("moveArm");
       }
     );
-      
-
   }
 
   public Command moveArmToPosition(Double position) {
@@ -97,7 +86,7 @@ public class Arm extends SubsystemBase {
           Double target = MathUtil.clamp(position, ArmConstants.armFrontLimit, ArmConstants.armRearLimit);
 
           // Calculate the PID result, and clamp to the arm's maximum velocity limit.
-          Double result =  MathUtil.clamp(armPID.calculate(getArmDegrees(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
+          Double result =  MathUtil.clamp(armPID.calculate(encoder.getPosition(), target), -1 * ArmConstants.armVelocityLimit, ArmConstants.armVelocityLimit);
 
           armMotorRight.set(result);
 
@@ -105,17 +94,11 @@ public class Arm extends SubsystemBase {
         }).until(() -> armPID.atSetpoint());
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("arm encoder raw", encoder.getPosition());
-    SmartDashboard.putNumber("arm encoder real", getArmDegrees());
+    SmartDashboard.putNumber("arm encoder", encoder.getPosition());
     SmartDashboard.putNumber("setpoint", armPID.getSetpoint());
     
   }
@@ -123,5 +106,6 @@ public class Arm extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+    
   }
 }
