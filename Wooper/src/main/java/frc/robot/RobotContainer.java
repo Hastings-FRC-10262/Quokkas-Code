@@ -41,7 +41,8 @@ public class RobotContainer {
   }
 
   public void configureAutos() {
-    autoChooser.setDefaultOption("Do Anything", Autos.driveForward(drive, arm, intake));
+    autoChooser.addOption("Center With Coral", Autos.autoSideMiddle(drive, arm, intake));
+    autoChooser.setDefaultOption("Taxi", Autos.taxi(drive));
     //autoChooser.addOption("", Autos.);
     //autoChooser.addOption("", Autos.);
     //autoChooser.addOption("", Autos.);
@@ -66,28 +67,23 @@ public class RobotContainer {
       .and(mechanismController.leftBumper().negate()) 
       .whileTrue(arm.moveArm(-1 * OperatorConstants.armSpeed));
 
-    //PID bindings
-    mechanismController.a()
-      .onTrue(arm.moveArmToPosition(ArmConstants.testPosition60));
-      
-    mechanismController.b()
-      .onTrue(arm.moveArmToPosition(ArmConstants.testPosition40));
+
 
     // Move to intake coral with Y
-    mechanismController.y()
+    mechanismController.a()
       .onTrue(arm.moveArmToPosition(ArmConstants.positionFloorIntake));
 
     // // Move to intake algae with X
     // mechanismController.x()
     //   .onTrue(arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
 
-    // // Move to remove low-reef algae and dump L1 coral with B
-    // mechanismController.b()
-    //   .onTrue(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
+    // Move to remove low-reef algae and dump L1 coral with B
+    mechanismController.b()
+      .onTrue(arm.moveArmToPosition(ArmConstants.positionDepositL1));
 
-    // // Move to remove high-reef algae with A
-    // mechanismController.a()
-    //   .onTrue(arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
+    // Move to remove high-reef algae with A
+    mechanismController.y()
+      .onTrue(arm.moveArmToPosition(ArmConstants.positionHumanPlayerIntake));
 
     // *** Intake bindings ***
     // Default behaviour (do nothing)
@@ -101,7 +97,7 @@ public class RobotContainer {
     // Run intake in reverse with right trigger button
     mechanismController.rightTrigger()
       .and(mechanismController.rightBumper().negate()) 
-      .whileTrue(intake.moveIntake(-0.5));
+      .whileTrue(intake.moveIntake(-0.2));
 
   }
 
@@ -111,6 +107,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Autos.driveForward(drive, arm, intake);
+    //return Autos.driveForward(drive, arm, intake);
+    return autoChooser.getSelected();
   }
 }

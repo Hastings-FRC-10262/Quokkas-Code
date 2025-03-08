@@ -68,7 +68,7 @@ public class DriveTrain extends SubsystemBase {
           
   //         leftFront.set(0.3 * left.getAsDouble());
   //         rightFront.set(0.3 * right.getAsDouble());
-  //       });
+  //       });x 
   // }
 
   public Command driveArcade(DoubleSupplier linear, DoubleSupplier turn) {
@@ -86,8 +86,8 @@ public class DriveTrain extends SubsystemBase {
   public Command moveStraight(Double velocity) {
     return run(
       () -> {
-        leftFront.set(velocity);
-        rightFront.set(velocity);
+        leftFront.set(-velocity);
+        rightFront.set(-velocity);
       });
   }
 

@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
     
 
     armPID = new PIDController(ArmConstants.armkP, ArmConstants.armkI, ArmConstants.armkD);
-    armPID.setTolerance(1);
+    armPID.setTolerance(ArmConstants.armTolerance);
     }
     
   public Command moveArm(Double velocity) {

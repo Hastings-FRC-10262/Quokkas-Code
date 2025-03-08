@@ -24,14 +24,16 @@ public final class Constants {
      
       //Robot starting angle
       public static Double startingAngle = 54.644;
+
+      public static Double armTolerance = 2.0;
       
       //Coral PID setpoints
       public static Double positionFloorIntake            = 1.0;
-      public static Double positionHumanPlayerIntake      = 50.0; //PLACEHOLDER!
-      public static Double positionDepositL1              = 40.0; //PLACEHOLDER!
+      public static Double positionDepositL1              = 33.543; //PLACEHOLDER!
+      public static Double positionHumanPlayerIntake      = 59.478; //PLACEHOLDER!
       
-      public static Double testPosition40 = 40.0;
-      public static Double testPosition60 = 60.0;
+      //public static Double testPosition40 = 40.0;
+      //public static Double testPosition60 = 60.0;
 
       // Define Arm position limits
       public static Double armFrontLimit            = 0.0;
