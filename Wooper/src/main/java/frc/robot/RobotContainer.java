@@ -41,8 +41,8 @@ public class RobotContainer {
   }
 
   public void configureAutos() {
-    autoChooser.addOption("Center With Coral", Autos.autoSideMiddle(drive, arm, intake));
-    autoChooser.setDefaultOption("Taxi", Autos.taxi(drive));
+    autoChooser.setDefaultOption("Center With Coral", Autos.autoSideMiddle(drive, arm, intake));
+    autoChooser.addOption("Taxi", Autos.taxi(drive));
     //autoChooser.addOption("", Autos.);
     //autoChooser.addOption("", Autos.);
     //autoChooser.addOption("", Autos.);
