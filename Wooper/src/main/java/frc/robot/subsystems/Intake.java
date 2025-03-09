@@ -15,48 +15,39 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 
 public class Intake extends SubsystemBase {
-  SparkMax intakeMotor1, intakeMotor2;
-  SparkMaxConfig intakeMotor1Config, intakeMotor2Config;
+  SparkMax intakeMotorRight, intakeMotorLeft;
+  SparkMaxConfig intakeMotorRightConfig, intakeMotorLeftConfig;
 
 
   /** Creates a new Intake. */
   public Intake() {
-    intakeMotor1 = new SparkMax(8, MotorType.kBrushed);
-    intakeMotor2 = new SparkMax(9, MotorType.kBrushed);
+    intakeMotorRight = new SparkMax(5, MotorType.kBrushless);
+    intakeMotorLeft = new SparkMax(4, MotorType.kBrushless);
 
-    intakeMotor1Config = new SparkMaxConfig();
-    intakeMotor2Config = new SparkMaxConfig();
+    intakeMotorRightConfig = new SparkMaxConfig();
+    intakeMotorLeftConfig = new SparkMaxConfig();
 
-
-    intakeMotor1.configure(intakeMotor1Config.
+    intakeMotorRight.configure(intakeMotorRightConfig.
       inverted(false).
       idleMode(IdleMode.kBrake), 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
 
-    intakeMotor2.configure(intakeMotor2Config.
-      idleMode(IdleMode.kBrake).
-      follow(8), 
+    intakeMotorLeft.configure(intakeMotorLeftConfig.
+      inverted(false).
+      follow(intakeMotorRight).
+      idleMode(IdleMode.kBrake), 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kPersistParameters);
-
-
   }
 
   public Command moveIntake(Double velocity) {
     // Inline construction of command goes here.
     return run(
         () -> {
-          
-          intakeMotor1.set(velocity);
+          intakeMotorRight.set(velocity);
         });
   }
-
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
 
   @Override
   public void periodic() {

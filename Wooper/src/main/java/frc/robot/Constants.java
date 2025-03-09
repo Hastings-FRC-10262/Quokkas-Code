@@ -14,28 +14,37 @@ package frc.robot;
  */
 public final class Constants {
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    public static Double driveForwardGain = 0.65;
+    public static Double driveTurnGain = 0.4;
+
+    public static Double armSpeed = 0.4;
   }
 
-  public static class ArmConstants {
-      // Define Arm position constants
-      public static Double positionIntakeCoral      = 0.422;
-      public static Double positionClimbEnd         = 0.368;
-      public static Double positionIntakeAlgae      = 0.348;
-      public static Double positionRemoveAlgaeLow   = 0.3083;
-      public static Double positionClimbStart       = 0.233;
-      public static Double positionRemoveAlgaeHigh  = 0.1;
+  public static class ArmConstants {    
+     
+      //Robot starting angle
+      public static Double startingAngle = 54.644;
+
+      public static Double armTolerance = 2.0;
+      
+      //Coral PID setpoints
+      public static Double positionFloorIntake            = 1.0;
+      public static Double positionDepositL1              = 33.543; //PLACEHOLDER!
+      public static Double positionHumanPlayerIntake      = 59.478; //PLACEHOLDER!
+      
+      //public static Double testPosition40 = 40.0;
+      //public static Double testPosition60 = 60.0;
 
       // Define Arm position limits
-      public static Double armFrontLimit            = 0.422;
-      public static Double armRearLimit             = 0.05;
+      public static Double armFrontLimit            = 0.0;
+      public static Double armRearLimit            = 140.0;
 
       // Define Arm velocity limit
       public static Double armVelocityLimit         = 0.8;
 
       // Define Arm PID constants
-      public static Double armkP                    = 17.5;
+      public static Double armkP                    = 0.03;
       public static Double armkI                    = 0.0;
-      public static Double armkD                    = 0.8;
+      public static Double armkD                    = 0.0;
   }
 }

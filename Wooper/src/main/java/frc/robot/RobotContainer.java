@@ -8,6 +8,9 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -19,93 +22,82 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final DriveTrain m_drive = new DriveTrain();
-  private final Arm m_arm = new Arm();
-  private final Intake m_intake = new Intake();
-  private final Climber m_climber = new Climber();
+  private final DriveTrain drive = new DriveTrain();
+  private final Arm arm = new Arm();
+  private final Intake intake = new Intake();
+  
+  private final CommandXboxController driverController =
+      new CommandXboxController(0);
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController mechanismController =
+      new CommandXboxController(1);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+  
   public RobotContainer() {
-    // Configure the trigger bindings
     configureBindings();
+    configureAutos();
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
+  public void configureAutos() {
+    autoChooser.setDefaultOption("Center With Coral", Autos.autoSideMiddle(drive, arm, intake));
+    autoChooser.addOption("Taxi", Autos.taxi(drive));
+    //autoChooser.addOption("", Autos.);
+    //autoChooser.addOption("", Autos.);
+    //autoChooser.addOption("", Autos.);
+
+    SmartDashboard.putData(autoChooser);
+  }
+
   private void configureBindings() {
 
     // *** Drive bindings ***
-    // Default behaviour (follow Y-axes of joysticks to implement tank drive)
-    m_drive.setDefaultCommand(m_drive.driveTank(m_driverController::getLeftY, m_driverController::getRightY));    
+    drive.setDefaultCommand(drive.driveArcade(driverController::getLeftY, driverController::getRightX));    
+ 
     
-
     // *** Arm bindings ***
+    arm.setDefaultCommand(arm.moveArm(0.0));
+    
+    mechanismController.leftBumper()
+      .and(mechanismController.leftTrigger().negate())
+      .whileTrue(arm.moveArm(OperatorConstants.armSpeed));
+
+    mechanismController.leftTrigger()
+      .and(mechanismController.leftBumper().negate()) 
+      .whileTrue(arm.moveArm(-1 * OperatorConstants.armSpeed));
+
+
 
     // Move to intake coral with Y
-    m_driverController.y()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeCoral));
+    mechanismController.a()
+      .onTrue(arm.moveArmToPosition(ArmConstants.positionFloorIntake));
 
-    // Move to intake algae with X
-    m_driverController.x()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
+    // // Move to intake algae with X
+    // mechanismController.x()
+    //   .onTrue(arm.moveArmToPosition(ArmConstants.positionIntakeAlgae));
 
     // Move to remove low-reef algae and dump L1 coral with B
-    m_driverController.b()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeLow));
+    mechanismController.b()
+      .onTrue(arm.moveArmToPosition(ArmConstants.positionDepositL1));
 
     // Move to remove high-reef algae with A
-    m_driverController.a()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionRemoveAlgaeHigh));
+    mechanismController.y()
+      .onTrue(arm.moveArmToPosition(ArmConstants.positionHumanPlayerIntake));
 
-    // Move to start climb with D-Pad Down
-    m_driverController.povDown()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbStart));
-
-    // Move to finish climb with D-Pad up
-    m_driverController.povUp()
-      .onTrue(m_arm.moveArmToPosition(ArmConstants.positionClimbEnd));
-
-    
     // *** Intake bindings ***
     // Default behaviour (do nothing)
-    m_intake.setDefaultCommand(m_intake.moveIntake(0.0));
+    intake.setDefaultCommand(intake.moveIntake(0.0));
 
     // Run intake with right bumper button
-    m_driverController.rightBumper()
-      .and(m_driverController.rightTrigger().negate())
-      .whileTrue(m_intake.moveIntake(0.75));
+    mechanismController.rightBumper()
+      .and(mechanismController.rightTrigger().negate())
+      .whileTrue(intake.moveIntake(0.5));
 
     // Run intake in reverse with right trigger button
-    m_driverController.rightTrigger()
-      .and(m_driverController.rightBumper().negate()) 
-      .whileTrue(m_intake.moveIntake(-0.75));
-
-
-    // *** Climber bindings ***
-    // Default behaviour (do nothing)
-    m_climber.setDefaultCommand(m_climber.moveClimber(0.0));
-
-    // Disengage climber with back button
-    m_driverController.leftBumper()
-      .and(m_driverController.leftTrigger().negate())
-      .whileTrue(m_climber.moveClimber(0.5));
-
-    // Engage climber with start buttom
-    m_driverController.leftTrigger()
-      .and(m_driverController.leftBumper().negate())
-      .whileTrue(m_climber.moveClimber(-0.5));
+    mechanismController.rightTrigger()
+      .and(mechanismController.rightBumper().negate()) 
+      .whileTrue(intake.moveIntake(-0.2));
 
   }
 
@@ -115,6 +107,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Autos.autoSideLeft(m_drive, m_arm, m_intake);
+    //return Autos.driveForward(drive, arm, intake);
+    return autoChooser.getSelected();
   }
 }
